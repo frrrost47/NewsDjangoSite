@@ -1,7 +1,7 @@
 from django.db import models
 
 
-# id создается автоматически
+# id и pk создается автоматически
 class News(models.Model):
     title = models.CharField(max_length=150)
     content = models.TextField(blank=True)  # blank true - не обязательно к заполнению
@@ -18,3 +18,7 @@ class News(models.Model):
     '''
     photo = models.ImageField(upload_to='photos/%Y/%m/%d/')  # путь загрузки картинок
     is_published = models.BooleanField(default=True)  # без default = none
+
+    # в shell принтит объект отображая его title
+    def __str__(self):
+        return self.title
