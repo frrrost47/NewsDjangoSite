@@ -1,0 +1,11 @@
+<!-- этот шаблон используется inclusion тегом из templatetags.news_tags.py
+и тут доступны все аргументы передаваемые в функцию show_categories из news.tags.py
+-->
+
+<div class="list-group">
+    {{ categories_name }}
+    {% for item in categories %}
+    <a href="{% url 'category' item.pk %}" class="list-group-item list-group-item-action">
+        {{ item.title }} </a>
+    {% endfor %}
+</div>

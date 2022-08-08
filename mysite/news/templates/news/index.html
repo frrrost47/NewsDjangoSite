@@ -3,50 +3,41 @@
 
 {% block title %}
 <!-- block.super получить родительский default шаблон title-->
-    {{ title }} :: {{ block.super }}
+{{ title }} :: {{ block.super }}
 {% endblock %}
 
 {% block sidebar %}
-<div class="col-md-3">
-    <div class="list-group">
-        {% for item in categories %}
-        <a href="{% url 'category' item.pk %}" class="list-group-item list-group-item-action">
-            {{ item.title }} </a>
-        {% endfor %}
-    </div>
-</div>
+{% include 'inc/_sidebar.html' %}
 {% endblock %}
 
 {% block content %}
-<div class="col-md-9">
-    {% for item in news %}
+{% for item in news %}
 
-    <div class="card mb-3">
-        <div class="card-header">
-            Категория: <a href="{% url 'category' item.category.pk %}"> {{ item.category.title }}</a>
-        </div>
-        <div class="card-body">
-            <div class="media">
-                {% if item.photo %}
-                <img alt="" class="mr-3" src="{{ item.photo.url }}" width="350">
-                {% else %}
-                <img alt="" class="mr-3" src="https://picsum.photos/id/1060/350/235/?blur=2">
-                {% endif %}
-                <div class="media-body">
-                    <h5 class="card-title">{{ item.title }}</h5>
-                    <p class="card-text">{{ item.content|safe|linebreaks|truncatewords:50 }}</p>
-                    <a class="btn btn-primary" href="#">Read more...</a>
-                </div>
+<div class="card mb-3">
+    <div class="card-header">
+        Категория: <a href="{% url 'category' item.category.pk %}"> {{ item.category.title }}</a>
+    </div>
+    <div class="card-body">
+        <div class="media">
+            {% if item.photo %}
+            <img alt="" class="mr-3" src="{{ item.photo.url }}" width="350">
+            {% else %}
+            <img alt="" class="mr-3" src="https://picsum.photos/id/1060/350/235/?blur=2">
+            {% endif %}
+            <div class="media-body">
+                <h5 class="card-title">{{ item.title }}</h5>
+                <p class="card-text">{{ item.content|safe|linebreaks|truncatewords:50 }}</p>
+                <a class="btn btn-primary" href="#">Read more...</a>
             </div>
         </div>
-        <div class="card-footer text-muted">
-            Срок {{ item.created_at|timesince }} Дата создания {{ item.created_at|date:'Y-m-d H:i:s'}}
-        </div>
     </div>
-    {% empty %}
-    Empty news data...
-    {% endfor %}
+    <div class="card-footer text-muted">
+        Срок {{ item.created_at|timesince }} Дата создания {{ item.created_at|date:'Y-m-d H:i:s'}}
+    </div>
 </div>
+{% empty %}
+Empty news data...
+{% endfor %}
 {% endblock %}
 
 
