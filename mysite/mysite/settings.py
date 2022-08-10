@@ -113,6 +113,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+''' Указывает на путь к папке в которой хранятся статические файлы 
+ так же в эту папку будет собираться статика всех моделей проекта 
+ после команды collect static.
+ Эту команду надо выполнять на реальном сервере '''
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+''' Список путей к дополнительным файлам со статикой '''
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'mysite/static'),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
