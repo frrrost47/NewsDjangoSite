@@ -33,6 +33,24 @@ def view_news(request, news_id):
     return render(request, 'news/view_news.html', {'news_item': news_item})
 
 
+# Контроллер с формой, которая связанна с моделью
+def add_news(request):
+    if request.method == 'POST':
+        # таким образом заполнили форму через POST
+        form = NewsForm(request.POST)
+        # если форма прошла валидацию
+        if form.is_valid():
+            # form.cleaned_data - данные с которыми можно работать(например для SQL запросов)
+            news = form.save()
+            # после сохранения перекинут на страницу новости
+            return redirect(news)
+    else:
+        form = NewsForm()
+    return render(request, 'news/add_news.html', {'form': form})
+
+
+''' Контроллер с формой, которая НЕ связанна с моделью'''
+'''
 def add_news(request):
     if request.method == 'POST':
         # таким образом заполнили форму через POST
@@ -48,3 +66,4 @@ def add_news(request):
     else:
         form = NewsForm()
     return render(request, 'news/add_news.html', {'form': form})
+'''

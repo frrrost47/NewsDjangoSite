@@ -21,7 +21,7 @@ class News(models.Model):
     is_published = models.BooleanField(default=True, verbose_name='Опубликовано')  # без default = none
 
     ''' Опциональная связь "многие к одному" '''
-    category = models.ForeignKey('Category', on_delete=models.PROTECT, null=True, verbose_name='Категория')
+    category = models.ForeignKey('Category', on_delete=models.PROTECT, verbose_name='Категория')
 
     # в shell принтит объект отображая его title
     def __str__(self):
