@@ -1,5 +1,5 @@
 """View controllers"""
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import News, Category
 from .forms import NewsForm
 
@@ -35,7 +35,16 @@ def view_news(request, news_id):
 
 def add_news(request):
     if request.method == 'POST':
-        pass
+        # таким образом заполнили форму через POST
+        form = NewsForm(request.POST)
+        # если форма прошла валидацию
+        if form.is_valid():
+            # form.cleaned_data - данные с которыми можно работать(например для SQL запросов)
+            # ** - распаковка словаря
+            # .create сохранит новость и вернет ее в переменную
+            news = News.objects.create(**form.cleaned_data)
+            # после сохранения перекинут на страницу новости
+            return redirect(news)
     else:
         form = NewsForm()
     return render(request, 'news/add_news.html', {'form': form})
