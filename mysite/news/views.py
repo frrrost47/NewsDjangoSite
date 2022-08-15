@@ -5,6 +5,7 @@ from .forms import NewsForm
 from django.views.generic import ListView
 
 
+# Все новости
 class HomeNews(ListView):
     model = News
     template_name = 'news/home_news_list.html'
@@ -23,14 +24,21 @@ class HomeNews(ListView):
         return News.objects.filter(is_published=True)
 
 
-def index(request):
-    news = News.objects.all()
-    context = {
-        'news': news,
-        'title': 'Список новостей',
-    }
-    # шаблон ищется в папке templates по умолчанию
-    return render(request, 'news/index.html', context)
+# Новости отфильтрованные по категории
+class NewsByCategory(ListView):
+    model = News
+    template_name = 'news/home_news_list.html'
+    context_object_name = 'news'
+    allow_empty = False  # запрет показа пустых списков для выдачи 404 ошибки
+
+    def get_queryset(self):
+        return News.objects.filter(category_id=self.kwargs['category_id'], is_published=True)
+
+    # Метод переопределяется, чтобы получить контекст и наполнить его дополнительными данными как extra_context?
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = Category.objects.get(pk=self.kwargs['category_id'])
+        return context
 
 
 def get_category(request, category_id):
