@@ -32,7 +32,7 @@ class News(models.Model):
         благодаря этому методу шаблоны получают ссылку и рендерят страницу категории
         + в админке автоматически добавится кнопка "Смотреть на сайте" '''
     def get_absolute_url(self):
-        return reverse_lazy('view_news', kwargs={'news_id': self.pk})
+        return reverse_lazy('view_news', kwargs={'pk': self.pk})
 
     # класс для визуализации админки и пользовательской части
     class Meta:

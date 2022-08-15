@@ -1,0 +1,36 @@
+{# extends наследоваться от base.html (почему-то не надо полный путь указывать) #}
+{% extends 'base.html' %}
+
+{% block title %}
+{# block.super получить родительский default шаблон title #}
+{{ news_item.title }} :: {{ block.super }}
+{% endblock %}
+
+{% block sidebar %}
+{% include 'inc/_sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="card mb-3">
+    <div class="card-header">
+        Категория: <a href="{{ news_item.category.get_absolute_url }}"> {{ news_item.category }}</a>
+    </div>
+    <div class="card-body">
+        {% if item.photo %}
+        <img alt="" class="float-left mr-3" src="{{ news_item.photo.url }}" width="350">
+        {% else %}
+        <img alt="" class="float-left mr-3" src="https://picsum.photos/id/1060/350/235/?blur=2">
+        {% endif %}
+
+        <h5 class="card-title">{{ news_item.title }}</h5>
+        <p class="card-text">{{ news_item.content|safe|linebreaks }}</p>
+    </div>
+    <div class="card-footer text-muted">
+        Срок {{ news_item.created_at|timesince }} Дата создания {{ item.created_at|date:'Y-m-d H:i:s'}}
+    </div>
+</div>
+{% endblock %}
+
+
+
+

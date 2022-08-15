@@ -2,7 +2,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import News, Category
 from .forms import NewsForm
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 
 # Все новости
@@ -39,6 +39,13 @@ class NewsByCategory(ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = Category.objects.get(pk=self.kwargs['category_id'])
         return context
+
+
+class ViewNews(DetailView):
+    model = News
+    template_name = 'news/news_detail.html'
+    context_object_name = 'news_item'
+    # py_url_kwarg = 'news_id'
 
 
 def get_category(request, category_id):
