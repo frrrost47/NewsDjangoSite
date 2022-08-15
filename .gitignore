@@ -1,4 +1,5 @@
 mysite/media/
+mysite/static/
 .idea/
 venv/
 db.sqlite3
