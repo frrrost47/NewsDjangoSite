@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import News, Category
 from .forms import NewsForm
 
+
 def index(request):
     news = News.objects.all()
     context = {

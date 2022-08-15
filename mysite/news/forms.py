@@ -1,5 +1,7 @@
 from django import forms
 from .models import News
+import re
+from django.core.exceptions import ValidationError
 
 
 class NewsForm(forms.ModelForm):
@@ -15,9 +17,12 @@ class NewsForm(forms.ModelForm):
             'category': forms.Select(attrs={'class': 'form-control'}),
         }
 
-
-
-
+    # Кастомный валидатор - проверяет чтобы не было цифр в начале строки title
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        if re.match(r'\d', title):
+            raise ValidationError('Название не должно начинаться с цифры')
+        return title
 
 
 ''' forms.Form - Форма не связанная на прямую с моделью. Обычно применяется когда данные не надо сохранять в БД. 
