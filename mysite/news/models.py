@@ -6,6 +6,14 @@ python manage.py shell
 from news.models import *
 from django.db.models import Q  # для создания условий |(или) &(и) ~(не)
 from django.db.models import Avg, Count, Max, Min, StdDev, Sum, Variance # Агрегатные функции
+from django.db import connection  # чтобы смотреть обращения к BD (connection.queries)
+from django.db import reset_queries # чтобы очистить запросы connection через reset_queries()
+from django.db.models import F  # для сравнения и потокобезопасного(?) изменения полей модели
+from django.db.models.functions import Length  # использую в разделе Functions:
+
+
+reset_queries() - очистит массив запросов
+connection.queries - покажет какие запросы были выполнены
 
 # С подключением Q
 News.objects.filter(Q(pk__in=[5,6] | Q(title__contains='2') & ~Q(pk__lt=4))
@@ -13,11 +21,14 @@ News.objects.filter(Q(pk__in=[5,6] | Q(title__contains='2') & ~Q(pk__lt=4))
 # По умолчанию идет условие И
 News.objects.filter(pk__in=[5,6], title__contains='2', pk__gt=4) 
 News.objects.all()[:3] - получить 3 записи (не поддерживает отрицательные индексы)
+
 .last()
 .first()
 .distinct() - Оставит только уникальные записи
 .aggregate() - агрегатные функции
 
+Aggregate:
+# агрегатные функции позволяют делать вычисления
 News.objects.aggregate(Min('views'), Max('views')) - вернет словарь с 2 объектами с названиями по умолчанию
 News.objects.aggregate(min_views=Min('views'), max_views=Max('views')) - тоже самое с кастомными ключами словаря
 News.objects.aggregate(diff=Max('views')-Min('views')) - кастомное вычисление с разницей, по ключу diff
@@ -25,15 +36,34 @@ News.objects.aggregate(Sum('views')) - ключ views__sum
 News.objects.aggregate(Avg('views')) - среднее значение ключ views__avg
 News.objects.aggregate(Count('views'))  
 
-# annotate позволяет делать вычисления в группе записей для коунт по умолчанию ключ item.news__count либо кастомный cnt
+Annotate:
+# annotate позволяет делать вычисления в группе записей для count по умолчанию ключ item.news__count либо кастомный cnt
 cats = Category.objects.annotate(cnt=Count('news')) 
 for item in cats:
     print(item.title, item.cnt) 
-    
 cats = Category.objects.annotate(cnt=Count('news')).filter(cnt__gt=0)
-
 #  Добавление distinct позволяет посчитать только уникальные значения
 News.objects.aggregate(cnt=Count('views', distinct=True))
+
+Values:
+# формирует словарь в которых будут только конкретные поля и их связанные объекты (category__title)
+News.objects.values('title', 'views', 'category__title').get(pk=1)
+
+F:
+# Потокобезопасный способ работы с полями модели?
+news = News.objects.git(pk=1)
+news.views = F('views') + 1
+news.save()
+
+News.objects.filter(content__icontains=F('title'))
+
+
+Functions:
+# Дополнительные функции можно найти в документации
+news = News.objects.annotate(length=Length('title')).all()
+
+SQL raw:
+# Прямые SQL запросы
 '''
 
 
