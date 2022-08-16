@@ -1,6 +1,31 @@
 from django.db import models
 from django.urls import reverse_lazy
 
+''' Django ORM:
+python manage.py shell
+from news.models import *
+from django.db.models import Q  # для создания условий |(или) &(и) ~(не)
+from django.db.models import Avg, Count, Max, Min, StdDev, Sum, Variance # Агрегатные функции
+
+# С подключением Q
+News.objects.filter(Q(pk__in=[5,6] | Q(title__contains='2') & ~Q(pk__lt=4))
+
+# По умолчанию идет условие И
+News.objects.filter(pk__in=[5,6], title__contains='2', pk__gt=4) 
+News.objects.all()[:3] - получить 3 записи (не поддерживает отрицательные индексы)
+.last()
+.first()
+.distinct() - Оставит только уникальные записи
+.aggregate() - агрегатные функции
+
+News.objects.aggregate(Min('views'), Max('views')) - вернет словарь с 2 объектами с названиями по умолчанию
+News.objects.aggregate(min_views=Min('views'), max_views=Max('views')) - тоже самое с кастомными ключами словаря
+News.objects.aggregate(diff=Max('views')-Min('views')) - кастомное вычисление с разницей, по ключу diff
+News.objects.aggregate(Sum('views')) - ключ views__sum
+News.objects.aggregate(Avg('views')) - среднее значение ключ views__avg
+News.objects.aggregate(Count('views'))  
+'''
+
 
 # id и pk создается автоматически
 class News(models.Model):
@@ -19,9 +44,14 @@ class News(models.Model):
     # blank=True - опционально для заполнения
     photo = models.ImageField(upload_to='photos/%Y/%m/%d/', verbose_name='Фото', blank=True)
     is_published = models.BooleanField(default=True, verbose_name='Опубликовано')  # без default = none
+    views = models.IntegerField(default=0)
 
-    ''' Опциональная связь "многие к одному" '''
-    category = models.ForeignKey('Category', on_delete=models.PROTECT, verbose_name='Категория')
+    ''' Опциональная связь "многие к одному". 
+    related_name - обратная связь category_object.news.all() вернет все новости 
+    если не определить related_name, то по умолчанию будет:
+    category_object.news_set.all() как category_object.<имя модели>_set.all() '''
+    category = models.ForeignKey('Category', on_delete=models.PROTECT,
+                                 verbose_name='Категория', related_name='news')
 
     # в shell принтит объект отображая его title
     def __str__(self):
@@ -32,6 +62,7 @@ class News(models.Model):
         благодаря этому методу шаблоны получают ссылку и рендерят страницу категории
         + в админке автоматически добавится кнопка "Смотреть на сайте" 
         Так же является как redirect URL (например когда добавляется новость из формы) '''
+
     def get_absolute_url(self):
         return reverse_lazy('view_news', kwargs={'pk': self.pk})
 
@@ -53,6 +84,7 @@ class Category(models.Model):
         этот метод сам выстроит ссылку category/category_id
         благодаря этому методу шаблоны получают ссылку и рендерят страницу категории
         + в админке автоматически добавится кнопка "Смотреть на сайте" '''
+
     def get_absolute_url(self):
         return reverse_lazy('category', kwargs={'category_id': self.pk})
 
