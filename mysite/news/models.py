@@ -24,6 +24,16 @@ News.objects.aggregate(diff=Max('views')-Min('views')) - кастомное вы
 News.objects.aggregate(Sum('views')) - ключ views__sum
 News.objects.aggregate(Avg('views')) - среднее значение ключ views__avg
 News.objects.aggregate(Count('views'))  
+
+# annotate позволяет делать вычисления в группе записей для коунт по умолчанию ключ item.news__count либо кастомный cnt
+cats = Category.objects.annotate(cnt=Count('news')) 
+for item in cats:
+    print(item.title, item.cnt) 
+    
+cats = Category.objects.annotate(cnt=Count('news')).filter(cnt__gt=0)
+
+#  Добавление distinct позволяет посчитать только уникальные значения
+News.objects.aggregate(cnt=Count('views', distinct=True))
 '''
 
 
