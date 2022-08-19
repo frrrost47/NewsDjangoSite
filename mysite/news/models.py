@@ -64,6 +64,10 @@ news = News.objects.annotate(length=Length('title')).all()
 
 SQL raw:
 # Прямые SQL запросы
+news = News.objects.raw('SELECT * FROM news_news') 
+# при получении полей, поле id обязательное 
+news = News.objects.raw('SELECT id, title FROM news_news')
+news = News.objects.raw('SELECT * FROM news_news WHERE title = "News 5"')
 '''
 
 
