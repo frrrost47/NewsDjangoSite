@@ -11,6 +11,7 @@ class HomeNews(ListView):
     model = News
     template_name = 'news/home_news_list.html'
     context_object_name = 'news'  # название объектов БД для шаблона
+    # queryset = News.objects.select_related('category')
 
     # дополнительные атрибуты для шаблона(не рекомендуется для динамичных данных)
     # extra_context = {'title': 'Главная'}
@@ -23,7 +24,8 @@ class HomeNews(ListView):
 
     # Фильтр данных которые описывает этот класс
     def get_queryset(self):
-        return News.objects.filter(is_published=True)
+        # .select_related - улучшает качество SQL запроса(связанные модели выполнятся одним запросом)
+        return News.objects.filter(is_published=True).select_related('category')
 
 
 # Новости отфильтрованные по категории
