@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+
 from .models import News, Category
 
 
@@ -30,13 +31,12 @@ class NewsAdmin(admin.ModelAdmin):
     # mark_safe - помечает данную строку как html код и никак ее не экранирует
     def get_photo(self, obj):
         if obj.photo:
-            return mark_safe(f'<img src="{ obj.photo.url }" width="75">')
+            return mark_safe(f'<img src="{obj.photo.url}" width="75">')
         else:
             return '-'
 
     # название колонки get_photo будет отображаться как 'Миниатюра'
     get_photo.short_description = 'Миниатюра'
-
 
 
 @admin.register(Category)
