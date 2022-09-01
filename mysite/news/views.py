@@ -4,13 +4,16 @@ from .models import News, Category
 from .forms import NewsForm
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
+from .utils import MyMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # Все новости
-class HomeNews(ListView):
+class HomeNews(MyMixin, ListView):
     model = News
     template_name = 'news/home_news_list.html'
     context_object_name = 'news'  # название объектов БД для шаблона
+    mixin_prop = 'Hello world'
     # queryset = News.objects.select_related('category')
 
     # дополнительные атрибуты для шаблона(не рекомендуется для динамичных данных)
@@ -19,7 +22,8 @@ class HomeNews(ListView):
     # Метод переопределяется, чтобы получить контекст и наполнить его дополнительными данными как extra_context?
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Главная страница'
+        context['title'] = self.get_upper('Главная страница')
+        context['mixin_prop'] = self.get_prop()
         return context
 
     # Фильтр данных которые описывает этот класс
@@ -29,7 +33,7 @@ class HomeNews(ListView):
 
 
 # Новости отфильтрованные по категории
-class NewsByCategory(ListView):
+class NewsByCategory(MyMixin, ListView):
     model = News
     template_name = 'news/home_news_list.html'
     context_object_name = 'news'
@@ -41,7 +45,7 @@ class NewsByCategory(ListView):
     # Метод переопределяется, чтобы получить контекст и наполнить его дополнительными данными как extra_context?
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = Category.objects.get(pk=self.kwargs['category_id'])
+        context['title'] = self.get_upper(Category.objects.get(pk=self.kwargs['category_id']))
         return context
 
 
@@ -52,10 +56,12 @@ class ViewNews(DetailView):
     # py_url_kwarg = 'news_id'
 
 
-class CreateNews(CreateView):
+class CreateNews(LoginRequiredMixin, CreateView):
     form_class = NewsForm  # связываем класс с формой
     template_name = 'news/add_news.html'
     # success_url = reverse_lazy('home')  # redirect url
+    login_url = reverse_lazy('/admin')  # идет от LoginRequiredMixin будет перебрасывать сюда non admin users
+    # raise_exception = True # идет от LoginRequiredMixin будет вызывать исключение 403 для non admin users
 
 
 # def get_category(request, category_id):
