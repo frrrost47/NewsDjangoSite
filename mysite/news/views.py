@@ -23,6 +23,7 @@ class HomeNews(MyMixin, ListView):
     template_name = 'news/home_news_list.html'
     context_object_name = 'news'  # название объектов БД для шаблона
     mixin_prop = 'Hello world'
+    paginate_by = 2  # пагинация страниц по 2 записи
 
     # queryset = News.objects.select_related('category')
 
@@ -48,6 +49,7 @@ class NewsByCategory(MyMixin, ListView):
     template_name = 'news/home_news_list.html'
     context_object_name = 'news'
     allow_empty = False  # запрет показа пустых списков для выдачи 404 ошибки
+    paginate_by = 2  # пагинация страниц по 2 записи
 
     def get_queryset(self):
         return News.objects.filter(category_id=self.kwargs['category_id'], is_published=True)

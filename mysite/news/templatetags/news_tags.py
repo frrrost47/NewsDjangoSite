@@ -1,6 +1,6 @@
 from django import template
 from news.models import Category
-from django.db.models import Count
+from django.db.models import Count, F
 
 register = template.Library()
 
@@ -16,5 +16,6 @@ def get_categories():
 def show_categories(categories_name='Категории:'):
     # categories = Category.objects.all()
     # добавляет к модели запроса атрибут cnt и фильтрует по нему(в итоге пустые категории не будут отображаться)
-    categories = Category.objects.annotate(cnt=Count('news')).filter(cnt__gt=0)
+    # categories = Category.objects.annotate(cnt=Count('news')).filter(cnt__gt=0)
+    categories = Category.objects.annotate(cnt=Count('news', filter=F('news__is_published'))).filter(cnt__gt=0)
     return {'categories': categories, 'categories_name': categories_name}
