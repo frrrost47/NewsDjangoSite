@@ -6,6 +6,15 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 from .utils import MyMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
+
+
+def test(request):
+    objects = ['join1', 'paul2', 'george3', 'ringo4', 'join5', 'paul6', 'george7']
+    paginator = Paginator(objects, 2)
+    page_num = request.GET.get('page', 1)  # если в URL не будет 'page', то присвоит 1
+    page_obj = paginator.get_page(page_num)  # .get_page не вызывает исключения .page вызывает
+    return render(request, 'news/test.html', {'page_obj': page_obj})
 
 
 # Все новости
@@ -14,6 +23,7 @@ class HomeNews(MyMixin, ListView):
     template_name = 'news/home_news_list.html'
     context_object_name = 'news'  # название объектов БД для шаблона
     mixin_prop = 'Hello world'
+
     # queryset = News.objects.select_related('category')
 
     # дополнительные атрибуты для шаблона(не рекомендуется для динамичных данных)

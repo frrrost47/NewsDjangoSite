@@ -10,4 +10,5 @@ urlpatterns = [
     path('category/<int:category_id>/', NewsByCategory.as_view(), name='category'),  # URL с динамическим id
     path('news/<int:pk>/', ViewNews.as_view(), name='view_news'),  # URL с динамическим id
     path('news/add-news/', CreateNews.as_view(), name='add_news'),
+    path('test/', test, name='test'),
 ]
