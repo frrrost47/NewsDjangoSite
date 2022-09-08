@@ -11,4 +11,6 @@ urlpatterns = [
     path('news/<int:pk>/', ViewNews.as_view(), name='view_news'),  # URL с динамическим id
     path('news/add-news/', CreateNews.as_view(), name='add_news'),
     path('test/', test, name='test'),
+    path('register/', register, name='register'),
+    path('login/', login, name='login')
 ]

@@ -1,0 +1,17 @@
+<!-- extends наследоваться от base.html (почему-то не надо полный путь указывать) -->
+{% extends 'base.html' %}
+
+{% block title %}
+<!-- block.super получить родительский default шаблон title-->
+Login :: {{ block.super }}
+{% endblock %}
+
+{% block sidebar %}
+{% include 'inc/_sidebar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<h1>Login</h1>
+
+{% endblock %}
